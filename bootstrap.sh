@@ -98,14 +98,24 @@ install_homebrew() {
 
 # Install git via Homebrew
 install_git() {
-    if command -v git &> /dev/null; then
-        log_info "Git already installed: $(git --version)"
+    # Determine Homebrew prefix
+    local brew_prefix
+    if [[ -d /opt/homebrew ]]; then
+        brew_prefix="/opt/homebrew"
+    else
+        brew_prefix="/usr/local"
+    fi
+
+    # Check if Homebrew git is already installed
+    if [[ -x "$brew_prefix/bin/git" ]]; then
+        log_info "Homebrew git already installed: $($brew_prefix/bin/git --version)"
         return 0
     fi
 
+    # Install git via Homebrew (even if Xcode CLT git exists)
     log_info "Installing git via Homebrew..."
     if brew install git; then
-        log_info "Git installed successfully: $(git --version)"
+        log_info "Git installed successfully: $($brew_prefix/bin/git --version)"
     else
         error_exit "Failed to install git" 3
     fi
@@ -152,6 +162,24 @@ main() {
     echo ""
     log_info "Repository cloned to: $INSTALL_DIR"
     echo ""
+
+    # Check if Homebrew PATH setup is needed
+    local brew_prefix
+    if [[ -d /opt/homebrew ]]; then
+        brew_prefix="/opt/homebrew"
+    else
+        brew_prefix="/usr/local"
+    fi
+
+    # Remind user to add Homebrew to PATH if not in their shell config
+    if ! grep -q 'brew shellenv' ~/.zshrc 2>/dev/null && ! grep -q 'brew shellenv' ~/.zprofile 2>/dev/null; then
+        log_warn "Add Homebrew to your PATH by running:"
+        echo ""
+        echo "    echo 'eval \"\$($brew_prefix/bin/brew shellenv)\"' >> ~/.zprofile"
+        echo "    eval \"\$($brew_prefix/bin/brew shellenv)\""
+        echo ""
+    fi
+
     log_info "Next steps:"
     log_info "  1. Install Claude Code: https://docs.anthropic.com/en/docs/claude-code"
     log_info "  2. Run the setup skill: cd $INSTALL_DIR && claude"
