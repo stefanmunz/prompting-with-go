@@ -1,0 +1,138 @@
+#!/bin/bash
+#
+# bootstrap.sh
+# Bootstrap script for prompting-with-go on a fresh Mac
+#
+# This script:
+# 1. Installs Homebrew (if not present)
+# 2. Installs git via Homebrew (if not present)
+# 3. Clones the prompting-with-go repository
+#
+# Usage:
+#   curl -fsSL https://raw.githubusercontent.com/stefanmunz/prompting-with-go/main/bootstrap.sh | bash
+#
+# Exit codes:
+#   0 - Success
+#   1 - General error
+#   2 - Homebrew installation failed
+#   3 - Git installation failed
+#   4 - Clone failed
+
+set -e
+
+# Configuration
+REPO_URL="https://github.com/stefanmunz/prompting-with-go.git"
+INSTALL_DIR="$HOME/prompting-with-go"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1" >&2
+}
+
+error_exit() {
+    log_error "$1"
+    exit "${2:-1}"
+}
+
+# Install Homebrew
+install_homebrew() {
+    if command -v brew &> /dev/null; then
+        log_info "Homebrew already installed: $(brew --version | head -1)"
+        return 0
+    fi
+
+    log_info "Installing Homebrew..."
+    if /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+        log_info "Homebrew installed successfully"
+
+        # Add Homebrew to PATH for Apple Silicon Macs
+        if [[ -f /opt/homebrew/bin/brew ]]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [[ -f /usr/local/bin/brew ]]; then
+            eval "$(/usr/local/bin/brew shellenv)"
+        fi
+
+        if ! command -v brew &> /dev/null; then
+            error_exit "Homebrew installed but not found in PATH. Please restart your terminal and run this script again." 2
+        fi
+    else
+        error_exit "Failed to install Homebrew" 2
+    fi
+}
+
+# Install git via Homebrew
+install_git() {
+    if command -v git &> /dev/null; then
+        log_info "Git already installed: $(git --version)"
+        return 0
+    fi
+
+    log_info "Installing git via Homebrew..."
+    if brew install git; then
+        log_info "Git installed successfully: $(git --version)"
+    else
+        error_exit "Failed to install git" 3
+    fi
+}
+
+# Clone the repository
+clone_repo() {
+    if [[ -d "$INSTALL_DIR" ]]; then
+        log_warn "Directory $INSTALL_DIR already exists"
+        log_info "Pulling latest changes..."
+        if (cd "$INSTALL_DIR" && git pull); then
+            log_info "Repository updated"
+        else
+            log_warn "Could not pull, directory may not be a git repo"
+        fi
+        return 0
+    fi
+
+    log_info "Cloning prompting-with-go to $INSTALL_DIR..."
+    if git clone "$REPO_URL" "$INSTALL_DIR"; then
+        log_info "Repository cloned successfully"
+    else
+        error_exit "Failed to clone repository" 4
+    fi
+}
+
+# Main
+main() {
+    echo ""
+    echo "========================================"
+    echo "  prompting-with-go Bootstrap Script"
+    echo "========================================"
+    echo ""
+
+    install_homebrew
+    install_git
+    clone_repo
+
+    echo ""
+    log_info "========================================="
+    log_info "Bootstrap completed successfully!"
+    log_info "========================================="
+    echo ""
+    log_info "Repository cloned to: $INSTALL_DIR"
+    echo ""
+    log_info "Next steps:"
+    log_info "  1. Install Claude Code: https://docs.anthropic.com/en/docs/claude-code"
+    log_info "  2. Run the setup skill: cd $INSTALL_DIR && claude"
+    log_info "     Then type: /setup-go-env"
+    echo ""
+}
+
+main
