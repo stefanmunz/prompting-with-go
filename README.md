@@ -15,8 +15,11 @@ xcode-select --install
 Wait for the installation to fully complete, then run the bootstrap script:
 
 ```bash
+sudo -v
 curl -fsSL https://raw.githubusercontent.com/stefanmunz/prompting-with-go/main/bootstrap.sh | bash
 ```
+
+The `sudo -v` caches your password (required by Homebrew installer).
 
 This installs Homebrew, git, and clones this repository to `~/prompting-with-go`.
 
