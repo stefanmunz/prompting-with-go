@@ -98,7 +98,7 @@ After verification, report to the user:
 
 **IMPORTANT: If mise was installed, always end with this message:**
 
-> To use mise in your terminal, run: `echo 'eval "$(~/.local/bin/mise activate zsh)"' >> ~/.zshrc && source ~/.zshrc`
+> To use mise in your terminal, run: `echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bash_profile && source ~/.bash_profile`
 >
 > (This requires your action—the agent runs in a non-interactive shell and cannot configure your terminal.)
 
