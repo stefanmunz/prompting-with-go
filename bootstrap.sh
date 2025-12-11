@@ -3,10 +3,15 @@
 # bootstrap.sh
 # Bootstrap script for prompting-with-go on a fresh Mac
 #
+# Prerequisites:
+#   Xcode Command Line Tools must be installed first:
+#   xcode-select --install
+#
 # This script:
-# 1. Installs Homebrew (if not present)
-# 2. Installs git via Homebrew (if not present)
-# 3. Clones the prompting-with-go repository
+# 1. Checks for Xcode CLT (exits with instructions if missing)
+# 2. Installs Homebrew (if not present)
+# 3. Installs git via Homebrew (if not present)
+# 4. Clones the prompting-with-go repository
 #
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/stefanmunz/prompting-with-go/main/bootstrap.sh | bash
@@ -17,6 +22,7 @@
 #   2 - Homebrew installation failed
 #   3 - Git installation failed
 #   4 - Clone failed
+#   5 - Xcode CLT not installed
 
 set -e
 
@@ -45,6 +51,23 @@ log_error() {
 error_exit() {
     log_error "$1"
     exit "${2:-1}"
+}
+
+# Check for Xcode Command Line Tools
+check_xcode_clt() {
+    if ! xcode-select -p &> /dev/null; then
+        echo ""
+        log_error "Xcode Command Line Tools are not installed."
+        echo ""
+        log_info "Please install them first by running:"
+        echo ""
+        echo "    xcode-select --install"
+        echo ""
+        log_info "Wait for the installation to complete, then run this script again."
+        echo ""
+        exit 5
+    fi
+    log_info "Xcode Command Line Tools found: $(xcode-select -p)"
 }
 
 # Install Homebrew
@@ -117,6 +140,7 @@ main() {
     echo "========================================"
     echo ""
 
+    check_xcode_clt
     install_homebrew
     install_git
     clone_repo

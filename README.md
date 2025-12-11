@@ -4,9 +4,15 @@ A Claude Code skill for setting up Go development environments with multiple Go 
 
 ## Setup (3 Steps)
 
-### Step 1: Bootstrap (fresh Mac only)
+### Step 1: Bootstrap (macOS only)
 
-On a fresh Mac without git, run this single command:
+First, install Xcode Command Line Tools (~1-2GB download):
+
+```bash
+xcode-select --install
+```
+
+Wait for the installation to fully complete, then run the bootstrap script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/stefanmunz/prompting-with-go/main/bootstrap.sh | bash
