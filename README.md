@@ -23,6 +23,14 @@ The `sudo -v` caches your password (required by Homebrew installer).
 
 This installs Homebrew, git, and clones this repository to `~/prompting-with-go`.
 
+**Verify it worked:**
+
+```bash
+git --version
+```
+
+You should see something like `git version 2.47.0` (without "Apple Git" at the end). If you see "Apple Git", run the Homebrew PATH command shown at the end of the script.
+
 If you already have git, just clone:
 
 ```bash

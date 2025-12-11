@@ -172,10 +172,10 @@ main() {
     fi
 
     # Remind user to add Homebrew to PATH if not in their shell config
-    if ! grep -q 'brew shellenv' ~/.zshrc 2>/dev/null && ! grep -q 'brew shellenv' ~/.zprofile 2>/dev/null; then
+    if ! grep -q 'brew shellenv' ~/.bash_profile 2>/dev/null && ! grep -q 'brew shellenv' ~/.zprofile 2>/dev/null && ! grep -q 'brew shellenv' ~/.zshrc 2>/dev/null; then
         log_warn "Add Homebrew to your PATH by running:"
         echo ""
-        echo "    echo 'eval \"\$($brew_prefix/bin/brew shellenv)\"' >> ~/.zprofile"
+        echo "    echo 'eval \"\$($brew_prefix/bin/brew shellenv)\"' >> ~/.bash_profile"
         echo "    eval \"\$($brew_prefix/bin/brew shellenv)\""
         echo ""
     fi
