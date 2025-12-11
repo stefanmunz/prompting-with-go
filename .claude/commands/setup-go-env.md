@@ -38,17 +38,20 @@ Based on the checks above, determine which arguments to pass to the script:
 
 ### Step 3: Run the Setup Script
 
-The script is located in the same directory as this skill file. Run it with the appropriate arguments:
+The script is located in the same directory as this skill file (`.claude/commands/setup-go-env.sh`).
+
+First, determine the repository root (where the user invoked Claude), then run the script:
 
 ```bash
-/Users/stefan/repositories/prompting-with-go/.claude/commands/setup-go-env.sh [arguments]
+# The script path is relative to the repo root
+./.claude/commands/setup-go-env.sh [arguments]
 ```
 
 Examples:
-- Both needed: `./setup-go-env.sh --install-mise --install-go`
-- Only Go needed: `./setup-go-env.sh --install-go`
-- Only mise needed: `./setup-go-env.sh --install-mise`
-- Neither needed (just create projects): `./setup-go-env.sh`
+- Both needed: `./.claude/commands/setup-go-env.sh --install-mise --install-go`
+- Only Go needed: `./.claude/commands/setup-go-env.sh --install-go`
+- Only mise needed: `./.claude/commands/setup-go-env.sh --install-mise`
+- Neither needed (just create projects): `./.claude/commands/setup-go-env.sh`
 
 ### Step 4: Handle Script Output
 
@@ -72,14 +75,14 @@ After the script completes successfully, verify that both Go versions work corre
 
 **Test Go 1.24 project:**
 ```bash
-cd /Users/stefan/repositories/prompting-with-go/go124-project && mise exec -- go run main.go
+cd ./go124-project && mise exec -- go run main.go
 ```
 
 Expected output should contain: `I am built with Go go1.24`
 
 **Test Go 1.25 project:**
 ```bash
-cd /Users/stefan/repositories/prompting-with-go/go125-project && mise exec -- go run main.go
+cd ./go125-project && mise exec -- go run main.go
 ```
 
 Expected output should contain: `I am built with Go go1.25`
@@ -115,7 +118,7 @@ Ensure the script is executable: `chmod +x setup-go-env.sh`
 ## Project Structure Created
 
 ```
-/Users/stefan/repositories/prompting-with-go/
+prompting-with-go/
 ├── go124-project/
 │   ├── .tool-versions    # Contains: go 1.24
 │   └── main.go           # Prints Go version
